@@ -1,0 +1,24 @@
+.
+[27/09/2026, 18:45:02] CARTA RECEBIDA <- De: teste (IP: 172.21.0.1) | Msg: localhosto sera
+[27/09/2026, 18:45:02] CARTA ENVIADA -> De: teste | Para IP: localhost | Msg: localhosto sera | Status: Sucesso (200)
+[27/09/2026, 19:02:18] CARTA RECEBIDA <- De: era (IP: 172.21.0.1) | Msg: era
+[27/09/2026, 19:02:18] CARTA ENVIADA -> Para: localhost | Status: Sucesso (200)
+[27/09/2026, 19:02:35] CARTA RECEBIDA <- De: uma (IP: 172.21.0.1) | Msg: uma
+[27/09/2026, 19:02:35] CARTA ENVIADA -> Para: localhost | Status: Sucesso (200)
+[27/09/2026, 19:04:41] CARTA RECEBIDA <- De: vez (IP: 172.21.0.1) | Msg: vez
+[27/09/2026, 19:04:41] CARTA ENVIADA -> Para: localhost | Status: Sucesso (200)
+[27/09/2026, 19:05:10] CARTA RECEBIDA <- De: um (IP: 172.21.0.1) | Msg: um
+[27/09/2026, 19:05:10] CARTA ENVIADA -> Para: localhost | Status: Sucesso (200)
+[27/09/2026, 19:22:02] CARTA ENVIADA -> De: eu | Para IP: era | Erro: This operation was aborted
+[27/09/2026, 19:22:26] CARTA ENVIADA -> De: eu | Para IP: era | Erro: This operation was aborted
+[27/09/2026, 19:22:55] CARTA ENVIADA -> De: eu | Para IP: era | Erro: This operation was aborted
+[27/09/2026, 19:24:50] CARTA RECEBIDA <- De: eu (IP: 172.21.0.1) | Msg: era
+[27/09/2026, 19:24:50] CARTA ENVIADA -> De: eu | Para IP: localhost | Status: Sucesso (200)
+[27/09/2026, 19:25:04] CARTA RECEBIDA <- De: eu (IP: 172.21.0.1) | Msg: uma
+[27/09/2026, 19:25:04] CARTA ENVIADA -> De: eu | Para IP: 172.19.0.1 | Status: Sucesso (200)
+[27/09/2026, 20:09:29] CARTA RECEBIDA <- De: era (IP: 172.21.0.1) | Msg: era
+[27/09/2026, 20:09:29] CARTA ENVIADA -> De: era | Para IP: 127.0.0.1 | Status: Sucesso (200)
+[27/09/2026, 20:24:47] POSTAGEM -> De [127.0.0.1] para [127.0.0.1] | Remetente: teste | Msg: era
+[27/09/2026, 20:25:43] POSTAGEM -> De [127.0.0.1] para [127.0.0.1] | Remetente: era | Msg: era
+[27/09/2026, 20:25:52] POSTAGEM -> De [127.0.0.1] para [127.0.0.1] | Remetente: era | Msg: uma
+[27/09/2026, 20:26:01] POSTAGEM -> De [127.0.0.1] para [127.0.0.1] | Remetente: era | Msg: vez
