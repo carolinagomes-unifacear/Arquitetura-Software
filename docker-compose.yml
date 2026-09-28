@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  correio-back:
+    container_name: correio_backend
+    build:
+      context: /home/carol/meus-containers/meu-backend/
+    ports:
+      - "82:82"
+    environment:
+      - NODE_ENV=production
+      - PORT=82
+    volumes:
+      # Mapeia a SUA pasta física para a pasta /backend de dentro do container
+      - /home/carol/meus-containers/meu-backend:/backend
+    restart: always
+
