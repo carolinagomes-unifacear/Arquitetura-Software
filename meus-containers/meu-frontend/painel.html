@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correio Postal - Rede Docker</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1, h2 { color: #0056b3; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #28a745; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        .painel-tabelas { display: flex; gap: 20px; margin-top: 20px; }
+        .coluna-tabela { flex: 1; min-width: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; word-break: break-all; }
+        th { background-color: #f2f2f2; }
+        .status-sucesso { color: green; font-weight: bold; }
+        .status-erro { color: red; font-weight: bold; font-family: monospace; font-size: 11px; }
+        .config-box { background: #eef; padding: 15px; border-radius: 4px; display: flex; gap: 15px; }
+        .ip-indicator { margin-top: 10px; font-size: 14px; color: #155724; background: #d4edda; padding: 8px; border-radius: 4px; border: 1px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📬 Sistema de Correio Postal</h1>
+    <p>Laboratório de Redes e Caixa Postal Assíncrona via Containers.</p>
+
+    <!-- Configuração do Endpoint com Campo de IP Dedicado -->
+    <div class="config-box">
+        <div style="flex: 1;">
+            <label for="remetente">Seu Nome / Remetente: </label>
+            <input type="text" id="remetente" placeholder="Ex: Aluno_Ana" onchange="atualizarPainel()">
+        </div>
+        <div style="flex: 1;">
+            <label for="seuIp">Seu IP Local / Caixa Postal: </label>
+            <input type="text" id="seuIp" value="127.0.0.1" placeholder="Ex: 192.168.1.15" onchange="atualizarPainel()">
+        </div>
+        <div style="flex: 1;">
+            <label for="backUrl">IP do Correio (Backend - Porta 82):</label>
+            <input type="text" id="backUrl" value="localhost" placeholder="localhost ou IP do servidor" onchange="atualizarPainel()">
+        </div>
+    </div>
+    <div id="identificadorIp" class="ip-indicator">
+        Monitorando caixa postal ativa para o endereço configurado acima.
+    </div>
+
+    <hr>
+
+    <h2>Enviar Nova Carta</h2>
+    <div class="form-group">
+        <label for="ipDestinatario">IP do Destinatário (Quem vai sacar esta mensagem usando o Front):</label>
+        <input type="text" id="ipDestinatario" placeholder="Ex: 192.168.1.120">
+    </div>
+    <div class="form-group">
+        <label for="mensagem">Mensagem:</label>
+        <textarea id="mensagem" maxlength="255" rows="2" placeholder="Digite sua mensagem aqui..."></textarea>
+    </div>
+    <button onclick="enviarCarta()">Enviar Carta para a Caixa Postal</button>
+
+    <hr>
+
+    <div class="painel-tabelas">
+        <!-- Enviadas -->
+        <div class="coluna-tabela">
+            <h3>Suas Cartas Enviadas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Para (IP Destino)</th>
+                        <th>Mensagem</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaEnviados">
+                    <tr><td colspan="3">Aguardando pooling de rede...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recebidos -->
+        <div class="coluna-tabela">
+            <h3>Sua Caixa de Entrada (Recebidas)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Origem (IP)</th>
+                        <th>Quem Mandou</th>
+                        <th>Mensagem</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaRecebidos">
+                    <tr><td colspan="3">Aguardando pooling de rede...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getBackendUrl() {
+        const host = document.getElementById('backUrl').value.trim() || 'localhost';
+        return `http://${host}:82`;
+    }
+
+    async function enviarCarta() {
+        const remetente = document.getElementById('remetente').value.trim();
+        const ipOrigem = document.getElementById('seuIp').value.trim();
+        const ipDestinatario = document.getElementById('ipDestinatario').value.trim();
+        const mensagem = document.getElementById('mensagem').value.trim();
+
+        if(!remetente || !ipOrigem || !ipDestinatario || !mensagem) {
+            alert("Preencha todos os campos: nome, seu IP, IP de destino e a mensagem!");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${getBackendUrl()}/enviar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ remetente, ipOrigem, ipDestinatario, mensagem })
+            });
+            
+            const data = await response.json();
+            if(response.ok) {
+                alert("Carta guardada com sucesso na caixa postal do destino!");
+                document.getElementById('mensagem').value = '';
+                atualizarPainel();
+            } else {
+                alert(`Erro de Sistema [HTTP ${response.status}]: ${data.erro}`);
+            }
+        } catch (erro) {
+            alert(`Falha Crítica de Infraestrutura de Rede:\n${erro.message}`);
+        }
+    }
+
+    // Corrigido para unificar o nome da função sem o 'c' de Portugal
+    async function atualizarPainel() {
+        const ipSolicitante = document.getElementById('seuIp').value.trim();
+        if(!ipSolicitante) return;
+
+        try {
+            const response = await fetch(`${getBackendUrl()}/status?ip=${encodeURIComponent(ipSolicitante)}`);
+            if(!response.ok) return;
+            const dados = await response.json();
+
+            document.getElementById('identificadorIp').innerHTML = 
+                `Caixa Postal ativa e monitorando o endereço: <strong>${dados.meu_ip}</strong>`;
+
+            document.getElementById('tabelaEnviados').innerHTML = dados.enviadas.map(c => `
+                <tr>
+                    <td>${c.ipDestino}<br><small>${c.data}</small></td>
+                    <td>${c.mensagem}</td>
+                    <td class="status-sucesso">Guardada</td>
+                </tr>
+            `).join('') || '<tr><td colspan="3">Nenhuma carta postada por este IP ainda.</td></tr>';
+
+            document.getElementById('tabelaRecebidos').innerHTML = dados.recebidas.map(c => `
+                <tr>
+                    <td>${c.ipOrigem}<br><small>${c.data}</small></td>
+                    <td>${c.remetente}</td>
+                    <td>${c.mensagem}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="3">Sua Caixa Postal está vazia no momento.</td></tr>';
+
+        } catch (erro) {
+            console.error("Erro de pooling do painel:", erro);
+        }
+    }
+
+    setInterval(atualizarPainel, 3000);
+    window.onload = atualizarPainel;
+</script>
+</body>
+</html>

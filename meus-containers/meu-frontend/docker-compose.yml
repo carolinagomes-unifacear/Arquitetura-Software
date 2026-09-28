@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:alpine
+    container_name: meu_front_nginx
+    ports:
+      - "81:80"
+    volumes:
+      - /home/carol/meus-containers/meu-frontend:/usr/share/nginx/html
+    restart: always
+
+volumes:
+  html_data:
+
